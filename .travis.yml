@@ -37,3 +37,4 @@ jobs:
         password: $CF_PASSWORD
         organization: $CF_ORG
         space: $CF_SPACE
+        manifest: manifest.yml
