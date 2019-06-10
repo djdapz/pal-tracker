@@ -1,2 +1,4 @@
-./gradlew clean build
-cf pushcd .
+set -e
+
+./gradlew clean test build
+cf pulssh
