@@ -1,7 +1,7 @@
-package io.pivotal.pal.tracker;
+package io.pivotal.pal.tracker.repository;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import io.pivotal.pal.tracker.TimeEntry;
+import io.pivotal.pal.tracker.TimeEntryRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,12 +48,9 @@ public class InMemoryTimeEntryRepository implements TimeEntryRepository {
     }
 
     @Override
-    public TimeEntry delete(long id) {
-        TimeEntry entry = find(id);
+    public void delete(long id) {
         entries = entries.stream()
                 .filter(it -> it.getId() != id)
                 .collect(toList());
-
-        return entry;
     }
 }

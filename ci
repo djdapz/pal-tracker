@@ -1,4 +1,4 @@
 set -e
 
 ./gradlew clean test build
-cf pulssh
+cf push

@@ -25,8 +25,18 @@ repositories {
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
+    compile("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion")
+    compile("org.springframework.boot:spring-boot-starter-jdbc:$springBootVersion")
+
+    compile("mysql:mysql-connector-java:6.0.6")
+    compile("org.flywaydb:flyway-core:5.2.4")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.7")
+
     testCompile("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+}
+
+springBoot {
+    buildInfo()
 }
 
 bootRun.environment([
