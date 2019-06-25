@@ -1,5 +1,8 @@
 package test.pivotal.pal.tracker;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.DistributionSummary;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.pivotal.pal.tracker.TimeEntry;
 import io.pivotal.pal.tracker.TimeEntryController;
 import io.pivotal.pal.tracker.TimeEntryRepository;
@@ -22,13 +25,23 @@ public class TimeEntryControllerTest {
     private TimeEntryController controller;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         timeEntryRepository = mock(TimeEntryRepository.class);
-        controller = new TimeEntryController(timeEntryRepository);
+        MeterRegistry meterRegistry = mock(MeterRegistry.class);
+
+        doReturn(mock(DistributionSummary.class))
+                .when(meterRegistry)
+                .summary("timeEntry.summary");
+
+        doReturn(mock(Counter.class))
+                .when(meterRegistry)
+                .counter("timeEntry.actionCounter");
+
+        controller = new TimeEntryController(timeEntryRepository, meterRegistry);
     }
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate() {
         long projectId = 123L;
         long userId = 456L;
         TimeEntry timeEntryToCreate = new TimeEntry(projectId, userId, LocalDate.parse("2017-01-08"), 8);
@@ -49,7 +62,7 @@ public class TimeEntryControllerTest {
     }
 
     @Test
-    public void testRead() throws Exception {
+    public void testRead() {
         long timeEntryId = 1L;
         long projectId = 123L;
         long userId = 456L;
@@ -66,7 +79,7 @@ public class TimeEntryControllerTest {
     }
 
     @Test
-    public void testRead_NotFound() throws Exception {
+    public void testRead_NotFound() {
         long nonExistentTimeEntryId = 1L;
         doReturn(null)
             .when(timeEntryRepository)
@@ -77,7 +90,7 @@ public class TimeEntryControllerTest {
     }
 
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         List<TimeEntry> expected = asList(
             new TimeEntry(1L, 123L, 456L, LocalDate.parse("2017-01-08"), 8),
             new TimeEntry(2L, 789L, 321L, LocalDate.parse("2017-01-07"), 4)
@@ -92,7 +105,7 @@ public class TimeEntryControllerTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         long timeEntryId = 1L;
         long projectId = 987L;
         long userId = 654L;
@@ -109,7 +122,7 @@ public class TimeEntryControllerTest {
     }
 
     @Test
-    public void testUpdate_NotFound() throws Exception {
+    public void testUpdate_NotFound() {
         long nonExistentTimeEntryId = 1L;
         doReturn(null)
             .when(timeEntryRepository)
@@ -120,7 +133,7 @@ public class TimeEntryControllerTest {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() {
         long timeEntryId = 1L;
         ResponseEntity response = controller.delete(timeEntryId);
         verify(timeEntryRepository).delete(timeEntryId);
